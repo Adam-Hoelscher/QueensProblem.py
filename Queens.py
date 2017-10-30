@@ -1,6 +1,6 @@
 from Genome import Genome
 from copy import deepcopy
-from random import randint
+from random import choice
 
 def Solve(n = 8,
           power = 2,
@@ -9,21 +9,25 @@ def Solve(n = 8,
           new_size = None,
           mutation_rate = .01,
           mutate_best = True,
-          use_chess_numbers = True,
+          use_chess_ranks = True,
           verbose = False,
           return_gen = False):
 
     if population_size is None:
         population_size = 5 * n
-        if verbose: print('Population size set to ', population_size, '.', sep='')
+        if verbose: print(
+            'Population size set to ', population_size, '.',
+            sep='')
 
     if copy_size is None:
         copy_size = int(.05 * population_size)
-        if verbose: print(copy_size, 'members will be cloned from one generation to the next.')
+        if verbose: print(
+            copy_size, 'members will be cloned from one generation to the next.')
 
     if new_size is None:
         new_size = copy_size
-        if verbose: print(new_size, 'new members will be introduced to each generation.')
+        if verbose: print(
+            new_size, 'new members will be introduced to each generation.')
 
     population = [Genome(size = n) for x in range(population_size)]
     population.sort(key = lambda x: x.fitness(power))
@@ -51,13 +55,13 @@ def Solve(n = 8,
 
         # breed to fill out the remainder of the population
         while len(next_gen) < population_size:
-            parent_0 = population[randint(0, population_size-1)]
-            parent_1 = population[randint(0, population_size-1)]
+            parent_0 = choice(population)
+            parent_1 = choice(population)
             child = parent_0 + parent_1
             next_gen.append(child)
 
         for i, member in enumerate(next_gen):
-            if i > 0 or mutate_best:
+            if i or mutate_best:
                 member.mutate(mutation_rate)
 
         population = next_gen[:]
@@ -67,9 +71,9 @@ def Solve(n = 8,
 
     winner = population[0].genes
 
-    if use_chess_numbers: winner = [x+1 for x in winner]
+    if use_chess_ranks: winner = [x + 1 for x in winner]
     return(winner)
 
 
 if __name__ == '__main__':
-    print(Solve(return_gen=True, verbose=True))
+    print(Solve(verbose=True))
